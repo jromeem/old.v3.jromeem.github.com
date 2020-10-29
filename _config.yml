@@ -12,7 +12,6 @@ favicon: "./logo.png" # relative path to site's favicon
 
 theme: riggraz/no-style-please # if you are using GitHub Pages, change it to remote_theme: riggraz/no-style-please
 
-'
 permalink: "/:slug.html"
 favicon: "./logo.png"
 theme: no-style-please
