@@ -1,4 +1,6 @@
 ---
+title: Post Example With Headings And Toc
+date: 2020-07-09 00:00:00 Z
 layout: post
 ---
 

@@ -1,4 +1,6 @@
 ---
+title: Very Very Very Long Title And Very Very Very Short Content
+date: 2020-07-08 00:00:00 Z
 layout: post
 ---
 
