@@ -1,17 +1,19 @@
-title: jm # name of the site
-author: Jerome Martinez # name of site's author
-email: jerome.e.martinez@gmail.com # email of site's author
-url: https://jromeem.github.io/ # root address of the site
-description: > # description of the site (multiple lines allowed)
- jerome martinez. software engineer. creative technologist.
+---
+title: jm
+timezone: UTC
+collections:
+  posts:
+    title: Posts
+    output: true
+  uploads:
+    title: Uploads
+    output: true
+author: Jerome Martinez
+email: jerome.e.martinez@gmail.com
+url: https://jromeem.github.io/
+description: 'jerome martinez. software engineer. creative technologist.
 
-permalink: /:slug.html
-
-favicon: "./logo.png" # relative path to site's favicon
-# goat_counter: "yoursitename" # put your GoatCounter name if you want to use GoatCounter analytics
-
-theme: riggraz/no-style-please # if you are using GitHub Pages, change it to remote_theme: riggraz/no-style-please
-
+'
 permalink: "/:slug.html"
 favicon: "./logo.png"
 theme: no-style-please
