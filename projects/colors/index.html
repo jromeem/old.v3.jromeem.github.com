@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>what do i do now?</title>
+		<style type="text/css">
+
+
+			html, body {
+				background-color: #ffffff;
+				position: fixed;
+				overflow: hidden;
+				margin: 0px;
+				overscroll-behavior: none;
+			}
+
+			canvas {
+				margin: 0px;
+				overflow-y: scroll;
+				overscroll: touch;
+			}
+
+		</style>
+	<script type="text/javascript" src="http://assets.tumblr.com/assets/scripts/tumblelog.js?_v=dd8c4ed07e8aca559e5b8ae3e21a2de6"></script><meta http-equiv="x-dns-prefetch-control" content="off"/></head>
+	<body>
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-8119996-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</script>
+
+		<script type="text/javascript">
+
+			var imageWidthHalf, imageHeightHalf;
+
+			var canvas = document.createElement( 'canvas' );
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			canvas.style.display = 'block';
+			// canvas.style.width = '100vw';
+			// canvas.style.height = '100vh';
+			canvas.style.overflowY = 'scroll';
+
+			document.body.appendChild( canvas );
+
+			var context = canvas.getContext( '2d' );
+
+			var image = document.createElement( 'img' );
+
+			image.addEventListener('load', function() {
+
+				imageWidthHalf = Math.floor( this.width / 2 );
+				imageHeightHalf = Math.floor( this.height / 2 );
+
+				document.addEventListener( 'mousemove', onMouseEvent, false );
+				document.addEventListener( 'touchstart', onTouchEvent, false );
+				document.addEventListener( 'touchmove', onTouchEvent, false );
+
+			}, false );
+
+			// Nick Cage head //image.src = "http://i.imgur.com/kZOMq.png";
+			// shib //image.src = "http://25.media.tumblr.com/a9c985ac7da6b9d53c9f44f05aba0be5/tumblr_mn2pup6Ei51qb8xggo1_500.png"
+			// anime girl //image.src = "https://upload.wikimedia.org/wikipedia/commons/2/2a/Wikipe-tan_in_navy_uniform2_transparent.png"
+			// jake gif //image.src = "http://25.media.tumblr.com/ad46f591a9d8c38834e621ccee2199cd/tumblr_mpl9caqtid1s4dk6fo1_500.gif"
+			image.src = "http://24.media.tumblr.com/f1fe83709fa1e9c265d755ca9383a5ce/tumblr_midbyoylyd1r6thx9o1_500.gif"
+
+			function onMouseEvent( event ) {
+
+				context.drawImage( image, event.clientX - imageWidthHalf, event.clientY - imageHeightHalf );
+
+			}
+
+			function onTouchEvent( event ) {
+
+				event.preventDefault();
+
+				for ( var i = 0; i < event.touches.length; i++ ) {
+
+					context.drawImage( image, event.touches[i].pageX - imageWidthHalf, event.touches[i].pageY - imageHeightHalf );
+
+				}
+
+			}
+
+		</script>
+	</body>
+</html>

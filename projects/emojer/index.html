@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>:koala::bear::pig:</title>
+        <style type="text/css">
+
+            html,body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                font-family: 'Lucida Grande', sans-serif;
+            }
+            textarea:focus {
+                outline: none;
+                resize: none;
+            }
+            #コンテナ {
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+            }
+            #texteat {
+                top:-2px;
+                float: left;
+                position: relative;
+                height: 110%;
+                width: 50%;
+                overflow: hidden;
+                font-family: 'Lucida Grande', sans-serif;
+                font-size: 38px;
+            }
+            #textspit {
+                overflow: hidden;
+                font-family: 'Lucida Grande', sans-serif;
+                font-size: 38px;
+            }
+            #textbite {
+                background-color: #ff9999;
+            }
+
+            /*
+            EmojiSymbols Font (c)blockworks - Kenichi Kaneko
+            http://emojisymbols.com/
+            */
+            @font-face {
+                font-family: "EmojiSymbols";
+                src: url('/assets/themes/shivna/webfonts/emoji-symbols/font/EmojiSymbols-Regular.woff') format('woff');
+                text-decoration: none;
+                font-style: normal;
+            }
+            .emj {
+                font-family: "EmojiSymbols";
+                line-height: 1;
+            }
+
+        </style>
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
+        <script type="text/javascript" src="emojer.js"></script>
+        <meta http-equiv="x-dns-prefetch-control" content="off"/>
+    </head>
+    <body>
+        <div id="コンテナ">
+            <textarea id="texteat" type="text" placeholder="ここにエモジを書いて下さい〜"></textarea>
+            <div id="textspit">
+                <span id="textchew"></span> <span id="textbite"></span>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var texteat = '';
+            var textspit = '';
+            var textbite = '';
+            var textchew = '';
+
+            var already_text = [];
+
+            $("#texteat").bind('input propertychange', function(){
+                // bind value and santize out input: alphanumeric only pls
+                texteat = $(this).val();
+                var food = texteat.split(/[^a-z^A-Z^0-9]+/);
+                var emojs = texteat.split(/[^a-z^A-Z^0-9]+/);
+
+                var word_count = food.length;
+
+                var last_word = emojs.pop();
+                already_text[word_count-1] = last_word;
+
+                console.log('last word:', last_word);
+
+                var emoji_icon = emoji_list[last_word];
+                if (emoji_icon) {
+                    var randColor = randomColor();
+                    already_text[word_count-1] = '<span class="emj" style="font-size:50px; color:#'+randColor+';">'+emoji_icon+'</span>';
+                }
+
+                textchew = already_text.join(' ');
+                $('#textchew').html(textchew);
+            });
+
+            var randomColor = function() {
+                var randColor = (Math.random().toString(16) + '000000').slice(2, 8);
+                return randColor;
+            }
+
+            console.log('you there man?');
+        </script>
+    </body>
+</html>

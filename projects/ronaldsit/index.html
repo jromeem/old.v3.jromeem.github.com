@@ -1,0 +1,342 @@
+<html>
+  <head>
+    <style>
+      body {
+        padding: 0px;
+        margin: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    ronaldo sitto confetti
+    <canvas id="cannon-canvas" style="display: block; width: 100vw; height: 100vh;"></canvas>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenLite.min.js"></script>
+  <script>
+    /*!
+   * Physics2DPlugin 3.5.1
+   * https://greensock.com
+   *
+   * @license Copyright 2020, GreenSock. All rights reserved.
+   * Subject to the terms at https://greensock.com/standard-license or for Club GreenSock members, the agreement issued with that membership.
+   * @author: Jack Doyle, jack@greensock.com
+   */
+    !function (e, t) { "object" == typeof exports && "undefined" != typeof module ? t(exports) : "function" == typeof define && define.amd ? define(["exports"], t) : t((e = e || self).window = e.window || {}) }(this, function (e) { "use strict"; function h() { return t || "undefined" != typeof window && (t = window.gsap) && t.registerPlugin && t } function i(e) { return Math.round(1e4 * e) / 1e4 } function j(e) { t = e || h(), l || (p = t.utils.getUnit, l = 1) } function k(e, t, i, s, n) { var a = e._gsap, r = a.get(e, t); this.p = t, this.set = a.set(e, t), this.s = this.val = parseFloat(r), this.u = p(r) || 0, this.vel = i || 0, this.v = this.vel / n, s || 0 === s ? (this.acc = s, this.a = this.acc / (n * n)) : this.acc = this.a = 0 } var t, l, p, v = Math.PI / 180, s = { version: "3.5.1", name: "physics2D", register: j, init: function init(e, t, i) { l || j(); var s = this, n = +t.angle || 0, a = +t.velocity || 0, r = +t.acceleration || 0, p = t.xProp || "x", o = t.yProp || "y", c = t.accelerationAngle || 0 === t.accelerationAngle ? +t.accelerationAngle : n; s.target = e, s.tween = i, s.step = 0, s.sps = 30, t.gravity && (r = +t.gravity, c = 90), n *= v, c *= v, s.fr = 1 - (+t.friction || 0), s._props.push(p, o), s.xp = new k(e, p, Math.cos(n) * a, Math.cos(c) * r, s.sps), s.yp = new k(e, o, Math.sin(n) * a, Math.sin(c) * r, s.sps), s.skipX = s.skipY = 0 }, render: function render(e, t) { var s, n, a, r, p, o, c = t.xp, l = t.yp, v = t.tween, h = t.target, u = t.step, f = t.sps, d = t.fr, g = t.skipX, y = t.skipY, w = v._from ? v._dur - v._time : v._time; if (1 === d) a = w * w * .5, s = c.s + c.vel * w + c.acc * a, n = l.s + l.vel * w + l.acc * a; else { for (r = o = (0 | (w *= f)) - u, o < 0 && (c.v = c.vel / f, l.v = l.vel / f, c.val = c.s, l.val = l.s, r = o = (t.step = 0) | w), p = w % 1 * d; o--;)c.v += c.a, l.v += l.a, c.v *= d, l.v *= d, c.val += c.v, l.val += l.v; s = c.val + c.v * p, n = l.val + l.v * p, t.step += r } g || c.set(h, c.p, i(s) + c.u), y || l.set(h, l.p, i(n) + l.u) }, kill: function kill(e) { this.xp.p === e && (this.skipX = 1), this.yp.p === e && (this.skipY = 1) } }; h() && t.registerPlugin(s), e.Physics2DPlugin = s, e.default = s; if (typeof (window) === "undefined" || window !== e) { Object.defineProperty(e, "__esModule", { value: !0 }) } else { delete e.default } });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.min.js"></script>
+  <script>
+    // set the canvas visible for this screen only
+      document.getElementById("cannon-canvas").style.display = "block";
+
+      // utilities
+      function getLength(x0, y0, x1, y1) {
+        // returns the length of a line segment
+        const x = x1 - x0;
+        const y = y1 - y0;
+        return Math.sqrt(x * x + y * y);
+      }
+
+      function getDegAngle(x0, y0, x1, y1) {
+        const y = y1 - y0;
+        const x = x1 - x0;
+        return Math.atan2(y, x) * (180 / Math.PI);
+      }
+
+      // some constants
+      const DECAY = 4; // confetti decay in seconds
+      const SPREAD = 60; // degrees to spread from the angle of the cannon
+      const GRAVITY = 1200;
+
+      class ConfettiCannon {
+        constructor() {
+          // setup a canvas
+          this.canvas = document.getElementById("cannon-canvas");
+          this.dpr = window.devicePixelRatio || 1;
+          this.ctx = this.canvas.getContext("2d");
+          this.ctx.scale(this.dpr, this.dpr);
+
+          // add confetti here
+          this.confettiSpriteIds = [];
+          this.confettiSprites = {};
+
+          // vector line representing the firing angle
+          this.drawVector = false;
+          this.vector = [
+            {
+              x: window.innerWidth,
+              y: window.innerHeight * 1.25,
+            },
+            {
+              x: window.innerWidth,
+              y: window.innerHeight * 2,
+            },
+          ];
+
+          this.pointer = {};
+
+          // bind methods
+          this.render = this.render.bind(this);
+          this.handleMousedown = this.handleMousedown.bind(this);
+          this.handleMouseup = this.handleMouseup.bind(this);
+          this.handleMousemove = this.handleMousemove.bind(this);
+          this.handleTouchstart = this.handleTouchstart.bind(this);
+          this.handleTouchmove = this.handleTouchmove.bind(this);
+          this.setCanvasSize = this.setCanvasSize.bind(this);
+
+          this.setupListeners();
+          this.setCanvasSize();
+
+          // fire off for a demo
+          // this.timer = setTimeout(this.handleMouseup, 1000);
+        }
+
+        setupListeners() {
+          // Use TweenLite tick event for the render loop
+          TweenLite.ticker.addEventListener("tick", this.render);
+
+          // bind events
+          window.addEventListener("mousedown", this.handleMousedown);
+          window.addEventListener("mouseup", this.handleMouseup);
+          window.addEventListener("mousemove", this.handleMousemove);
+          window.addEventListener("touchstart", this.handleTouchstart);
+          window.addEventListener("touchend", this.handleMouseup);
+          window.addEventListener("touchmove", this.handleTouchmove);
+          window.addEventListener("resize", this.setCanvasSize);
+        }
+
+        setCanvasSize() {
+          this.canvas.width = window.innerWidth * this.dpr;
+          this.canvas.height = window.innerHeight * this.dpr;
+          this.canvas.style.width = window.innerWidth + "px";
+          this.canvas.style.height = window.innerHeight + "px";
+        }
+
+        handleMousedown(event) {
+          clearTimeout(this.timer);
+          const x = event.clientX * this.dpr;
+          const y = event.clientY * this.dpr;
+
+          this.vector[0] = {
+            x,
+            y,
+          };
+          this.drawVector = true;
+        }
+
+        handleTouchstart(event) {
+          clearTimeout(this.timer);
+          event.preventDefault();
+          const x = event.touches[0].clientX * this.dpr;
+          const y = event.touches[0].clientY * this.dpr;
+          this.vector[0] = {
+            x,
+            y,
+          };
+
+          this.drawVector = true;
+        }
+
+        handleMouseup(event) {
+          this.drawVector = false;
+
+          const x0 = this.vector[0].x;
+          const y0 = this.vector[0].y;
+          const x1 = this.vector[1].x;
+          const y1 = this.vector[1].y;
+
+          const length = getLength(x0, y0, x1, y1);
+          const angle = getDegAngle(x0, y0, x1, y1) + 180;
+
+          const particles = length / 5 + 5;
+          const velocity = length * 10;
+          this.addConfettiParticles(particles, angle, velocity, x0, y0);
+        }
+
+        handleMousemove(event) {
+          const x = event.clientX * this.dpr;
+          const y = event.clientY * this.dpr;
+          this.vector[1] = {
+            x,
+            y,
+          };
+          this.pointer = this.vector[1];
+        }
+
+        handleTouchmove(event) {
+          event.preventDefault();
+          const x = event.changedTouches[0].clientX * this.dpr;
+          const y = event.changedTouches[0].clientY * this.dpr;
+          this.vector[1] = {
+            x,
+            y,
+          };
+          this.pointer = this.vector[1];
+        }
+
+        drawVectorLine() {
+          this.ctx.strokeStyle = "#009CEB";
+          this.ctx.lineWidth = 2 * this.dpr;
+
+          const x0 = this.vector[0].x;
+          const y0 = this.vector[0].y;
+          const x1 = this.vector[1].x;
+          const y1 = this.vector[1].y;
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(x0, y0);
+          this.ctx.lineTo(x1, y1);
+          this.ctx.stroke();
+        }
+
+        addConfettiParticles(amount, angle, velocity, x, y) {
+          let i = 0;
+          while (i < amount) {
+            // sprite
+            const r = _.random(4, 6) * this.dpr;
+            const d = _.random(15, 25) * this.dpr;
+
+            const cr = _.random(30, 255);
+            const cg = _.random(30, 230);
+            const cb = _.random(30, 230);
+            const color = `rgb(${cr}, ${cg}, ${cb})`;
+
+            const tilt = _.random(10, -10);
+            const tiltAngleIncremental = _.random(0.07, 0.05);
+            const tiltAngle = 0;
+
+            const id = _.uniqueId();
+            const sprite = {
+              [id]: {
+                angle,
+                velocity,
+                x,
+                y,
+                r,
+                d,
+                color,
+                tilt,
+                tiltAngleIncremental,
+                tiltAngle,
+              },
+            };
+
+            Object.assign(this.confettiSprites, sprite);
+            this.confettiSpriteIds.push(id);
+            this.tweenConfettiParticle(id);
+            i++;
+          }
+        }
+
+        tweenConfettiParticle(id) {
+          const minAngle = this.confettiSprites[id].angle - SPREAD / 2;
+          const maxAngle = this.confettiSprites[id].angle + SPREAD / 2;
+
+          const minVelocity = this.confettiSprites[id].velocity / 4;
+          const maxVelocity = this.confettiSprites[id].velocity;
+
+          // Physics Props
+          const velocity = _.random(minVelocity, maxVelocity);
+          const angle = _.random(minAngle, maxAngle);
+          const gravity = GRAVITY;
+          const friction = _.random(0.1, 0.25);
+          const d = 0;
+
+          TweenLite.to(this.confettiSprites[id], DECAY, {
+            physics2D: {
+              velocity,
+              angle,
+              gravity,
+              friction,
+            },
+            d,
+            ease: Power4.easeIn,
+            onComplete: () => {
+              // remove confetti sprite and id
+              _.pull(this.confettiSpriteIds, id);
+              delete this.confettiSprites[id];
+            },
+          });
+        }
+
+        updateConfettiParticle(id) {
+          const sprite = this.confettiSprites[id];
+
+          const tiltAngle = 0.0005 * sprite.d;
+
+          sprite.angle += 0.01;
+          sprite.tiltAngle += tiltAngle;
+          sprite.tiltAngle += sprite.tiltAngleIncremental;
+          sprite.tilt = Math.sin(sprite.tiltAngle - sprite.r / 2) * sprite.r * 2;
+          sprite.y += Math.sin(sprite.angle + sprite.r / 2) * 2;
+          sprite.x += Math.cos(sprite.angle) / 2;
+        }
+
+        drawConfetti() {
+          this.confettiSpriteIds.map((id) => {
+            const sprite = this.confettiSprites[id];
+
+            this.ctx.beginPath();
+            this.ctx.lineWidth = sprite.d / 2;
+            this.ctx.strokeStyle = sprite.color;
+            this.ctx.moveTo(sprite.x + sprite.tilt + sprite.r, sprite.y);
+            this.ctx.lineTo(
+              sprite.x + sprite.tilt,
+              sprite.y + sprite.tilt + sprite.r
+            );
+            this.ctx.stroke();
+
+            this.updateConfettiParticle(id);
+          });
+        }
+
+        drawPointer() {
+          const centerX = this.pointer.x;
+          const centerY = this.pointer.y;
+          const radius = 15 * this.dpr;
+
+          this.ctx.beginPath();
+          this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+          this.ctx.fillStyle = "transparent";
+          this.ctx.fill();
+          this.ctx.lineWidth = 2 * this.dpr;
+          this.ctx.strokeStyle = "#009CEB";
+          this.ctx.stroke();
+        }
+
+        drawPower() {
+          const x0 = this.vector[0].x;
+          const y0 = this.vector[0].y;
+          const x1 = this.vector[1].x;
+          const y1 = this.vector[1].y;
+
+          const length = getLength(x0, y0, x1, y1);
+          const centerX = x0;
+          const centerY = y0;
+          const radius = (1 * this.dpr * length) / 20;
+
+          this.ctx.beginPath();
+          this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+          this.ctx.fillStyle = "transparent";
+          this.ctx.fill();
+          this.ctx.lineWidth = 2 * this.dpr;
+          this.ctx.strokeStyle = "#333333";
+          this.ctx.stroke();
+        }
+
+        render() {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+          // only draw the vector when the drawVector flag is on
+          this.drawVector && this.drawVectorLine();
+          this.drawVector && this.drawPower();
+
+          this.drawPointer();
+          this.drawConfetti();
+        }
+      }
+
+      const confetti = new ConfettiCannon();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+  <script>gsap.registerPlugin(Physics2DPlugin);</script>
+</html>
