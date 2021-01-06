@@ -1,14 +1,33 @@
 <html>
   <head>
+    <title>🎉ronaldo🎉confetti🎉</title>
+    <meta name="description" content="hi ron">
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
       body {
         padding: 0px;
         margin: 0px;
+        background-color:cornsilk;
+      }
+      #ronaldo {
+        position: fixed;
+        padding: 0px;
+        margin: 0px;
+        width: 100vw;
+        height: 100vh;
+        font-family: 'Libre Baskerville', serif;
+        font-size: 72;
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        color:goldenrod;
       }
     </style>
   </head>
   <body>
-    ronaldo sitto confetti
+    <p id="ronaldo">ronaldo sitto confetti</p>
     <canvas id="cannon-canvas" style="display: block; width: 100vw; height: 100vh;"></canvas>
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenLite.min.js"></script>
