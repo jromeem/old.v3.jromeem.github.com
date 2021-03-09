@@ -135,7 +135,7 @@ const Content = () => {
     width: calc(100% - 20px);
     height: calc(100% - 20px);
     position: relative;
-    background-color: #ffc;
+    background-color: white;
     border: 10px solid green;
     flex-direction: column;
   `;
@@ -147,7 +147,7 @@ const Content = () => {
       position: relative;
       height: 100px;
       width: calc(100% - 20px);
-      background-color: #fcf;
+      background-color: white;
       align-items: center;
       justify-content: center;
       border: 10px solid orange;
