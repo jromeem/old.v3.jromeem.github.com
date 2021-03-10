@@ -150,7 +150,7 @@ const Content = () => {
       background-color: white;
       align-items: center;
       justify-content: center;
-      border: 10px solid orange;
+      border: 10px solid rgb(237, 162, 110);
     `;
     return (
       <div className={flexStyles}>
