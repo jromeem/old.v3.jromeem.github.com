@@ -1,6 +1,7 @@
 ---
 title: Monumental
 date: 2019-03-16 01:12:00 Z
+layout: hidden
 ---
 
 ![Screen Shot 2021-02-08 at 7.13.58 PM.png](/uploads/Screen%20Shot%202021-02-08%20at%207.13.58%20PM.png)  
